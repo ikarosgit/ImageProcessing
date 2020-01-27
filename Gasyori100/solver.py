@@ -5,14 +5,19 @@ import numpy as np
 
 from lib.misc import *
 from lib.filter import *
+from lib.histogram import *
 
 class Solver:
     
-    def __init__(self, imori_path, imori_noise_path):
-        assert os.path.exists(imori_path), f"No such file Exists: '{imori_path}'"
-        assert os.path.exists(imori_noise_path), f"No such file Exists: '{imori_noise_path}'"
+    def __init__(self, imori_path, imori_noise_path, imori_dark_path, imori_gamma_path):
+        assert os.path.exists(imori_path), f"No such file exists: '{imori_path}'"
+        assert os.path.exists(imori_noise_path), f"No such file exists: '{imori_noise_path}'"
+        assert os.path.exists(imori_dark_path), f"No such file exists: '{imori_dark_path}'"
+        assert os.path.exists(imori_dark_path), f"No such file exists: '{imori_gamma_path}'"
         self.imori_path = imori_path
         self.imori_noise_path = imori_noise_path
+        self.imori_dark_path = imori_dark_path
+        self.imori_gamma_path = imori_gamma_path
 
     def solve(self, question):
         if question == 7:
@@ -94,6 +99,51 @@ class Solver:
             gray = bgr2gray(img) 
             out = emboss_filter(gray)
             show_image(out, title="Emboss Filter")
+
+        elif question == 19:
+            """ LoGフィルタ """
+            img = cv2.imread(self.imori_noise_path)
+            gray = bgr2gray(img)
+            out = laplacian_of_gaussian_filter(gray)
+            show_image(out)
+
+        elif question == 20:
+            """ ヒストグラム表示 """
+            img = cv2.imread(self.imori_dark_path)
+            show_hist(img)
+
+        elif question == 21:
+            """ ヒストグラム正規化 """
+            img = cv2.imread(self.imori_dark_path)
+            out = histogram_normalization(img)
+            show_image(out)
+            show_hist(out)
+
+        elif question == 22:
+            """ ヒストグラム操作 """
+            img = cv2.imread(self.imori_dark_path)
+            out = change_histogram(img)
+            show_image(out)
+            show_hist(out)
+
+        elif question == 23:
+            """ ヒストグラム平坦化 """
+            img = cv2.imread(self.imori_path)
+            out = histogram_equalization(img)
+            show_image(out)
+            show_hist(out)
+
+        elif question == 24:
+            """ ガンマ補正 """
+            img = cv2.imread(self.imori_gamma_path)
+            show_image(img)
+            out = gamma_correction(img)
+            show_image(out)
+
+        elif question == 25:
+            """ 最近傍補間 """
+            img = cv2.imread(self.imori_path)
+            out = rescale_image_nn()
 
         else:
             raise ValueError("Unknown question number.")

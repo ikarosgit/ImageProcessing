@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 def rgb2bgr(img):
     return img[..., ::-1]
@@ -18,3 +19,19 @@ def show_image(img, title="Image", rgb=False):
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
+def show_hist(img, bins=255, title="Histgram"):
+    flatten = img.ravel().astype(np.float32)
+    plt.hist(flatten, bins=bins, rwidth=0.8, range=(0, 255))
+    plt.xlabel("Value")
+    plt.ylabel("Count")
+    plt.title(title)
+    plt.show()
+
+def gamma_correction(img, c=1, g=2.2):
+    img_shape = img.shape
+    out = img.copy().astype(np.float32)
+    out /= 255.
+    out = (out / c) ** (1 / g)
+    out *= 255.
+    out = out.astype(np.uint8)
+    return out.reshape(*img_shape)

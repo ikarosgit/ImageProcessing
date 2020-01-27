@@ -280,7 +280,27 @@ def laplacian_of_gaussian_filter(img, kernel_size=5, sigma=3):
     img = img.astype(np.float32)
     H, W, C = img.shape
 
-    out = np.zeros_like(img, dtype=np.float32)
-    K = 
+    pad = kernel_size // 2
+    img = np.pad(img, [[pad, pad], [pad, pad], [0, 0]], "constant")
 
+    out = np.zeros_like(img, dtype=np.float32)
+
+    K = np.zeros((kernel_size, kernel_size), dtype=np.float32)
+    for i in range(-pad, -pad+kernel_size):
+        for j in range(-pad, -pad+kernel_size):
+            K[i, j] = (i**2 + j**2 - sigma**2) * np.exp(-(i**2 + j**2) / (2 * sigma**2))
+
+    K /= 2 * np.pi * (sigma ** 6)
+    K /= K.sum()
+   
+    newH, newW, newC = out.shape
+    for i in range(0, newH-2*pad):
+        for j in range(0, newW-2*pad):
+            for k in range(0, newC):
+                out[i+pad, j+pad, k] = np.sum(
+                        K * img[i:i+kernel_size, j:j+kernel_size, k])
+   
+    out = np.clip(out, 0, 255) 
+    out = out[pad:H+pad, pad:W+pad, :].astype(np.uint8)
+    return out
 
