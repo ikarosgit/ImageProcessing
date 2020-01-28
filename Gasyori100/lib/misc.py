@@ -35,3 +35,17 @@ def gamma_correction(img, c=1, g=2.2):
     out *= 255.
     out = out.astype(np.uint8)
     return out.reshape(*img_shape)
+
+def rescale_image_nn(img, scale=1.5):
+    H, W, C = img.shape
+    out = np.zeros((int(H * scale), int(W * scale), 3), dtype=np.uint8)
+
+    newH, newW, newC = out.shape
+    for i in range(newH):
+        for j in range(newW):
+            out[i, j, :] = img[int(i / scale), int(j / scale), :]
+
+    return out
+
+def rescale_image_bilinear(img, scale=1.5):
+

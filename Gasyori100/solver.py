@@ -143,7 +143,11 @@ class Solver:
         elif question == 25:
             """ 最近傍補間 """
             img = cv2.imread(self.imori_path)
-            out = rescale_image_nn()
+            print("Input image shape: ", img.shape)
+            scale = 1.5
+            out = rescale_image_nn(img, scale=scale)
+            print("Scale: ", scale, "New image shape: ", out.shape)
+            show_image(out)
 
         else:
             raise ValueError("Unknown question number.")
